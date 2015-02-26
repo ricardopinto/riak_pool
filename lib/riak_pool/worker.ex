@@ -44,9 +44,9 @@ defmodule RiakPool.Worker do
 
     case :riakc_pb_socket.start_link(state.address, state.port, connection_options) do
       {:ok, connection} ->
-        connected_state = new_state.connection(connection)
+        connected_state = %__MODULE__.State{state| connection: connection}
       {:error, _reason} ->
-        faulty_state = new_state.connection(:undefined)
+        faulty_state = %__MODULE__.State{state| connection: :undefined}
         timer = :erlang.send_after(state.options[:retry_interval], self, :reconnect)
         faulty_state.timer(timer)
     end
