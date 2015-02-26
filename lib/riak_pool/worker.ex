@@ -39,7 +39,7 @@ defmodule RiakPool.Worker do
     end
 
     # Set timer as undefined
-    new_state = state.timer(:undefined)
+    new_state = %__MODULE__.State{state| timer: :undefined}
     connection_options = Dict.get(state.options, :connection_options, [])
 
     case :riakc_pb_socket.start_link(state.address, state.port, connection_options) do
@@ -54,7 +54,7 @@ defmodule RiakPool.Worker do
 
 
   def handle_info({:EXIT, _pid, _reason}, state) do
-    new_state = state.connection(:undefined)
+    new_state = %__MODULE__.State{state| connection: :undefined}
     timer = :erlang.send_after(state.options[:retry_interval], self, :reconnect)
     {:noreply, new_state.timer(timer)}
   end
