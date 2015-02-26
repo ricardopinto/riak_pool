@@ -20,7 +20,8 @@ defmodule RiakPool.Mixfile do
   defp deps do
     [
       {:poolboy, "~> 1.4.2"},
-      {:riakc, github: "basho/riak-erlang-client"},
+      {:riak_pb, github: "basho/riak_pb", override: true, tag: "2.0.0.16", compile: "./rebar get-deps compile deps_dir=../"},
+      {:riakc, github: "basho/riak-erlang-client", tag: "2.0.1"},
       {:ex_doc, github: "elixir-lang/ex_doc"}
     ]
   end
