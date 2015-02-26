@@ -1,5 +1,5 @@
 defmodule RiakPool do
-  use Supervisor.Behaviour
+  use Supervisor
 
 
   def start_link(address, port, options) do

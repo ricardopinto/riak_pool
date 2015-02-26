@@ -1,15 +1,14 @@
 defmodule RiakPool.Worker do
-  use GenServer.Behaviour
+  use Supervisor
   @behaviour :poolboy_worker
 
-  defrecord(State,
-    connection: :undefined,
-    address:    :undefined,
-    port:       :undefined,
-    options:    [],
-    timer:      :undefined
-  )
-
+  defmodule State do
+    defstruct connection: :undefined,
+              address:    :undefined,
+              port:       :undefined,
+              options:    [],
+              timer:      :undefined
+  end
 
   def start_link([address, port, options]) do
     :gen_server.start_link(__MODULE__, [address, port, options], [])
@@ -18,7 +17,7 @@ defmodule RiakPool.Worker do
 
   def init([address, port, options]) do
     :erlang.process_flag(:trap_exit, true)
-    state = State.new(address: address, port: port, options: options)
+    state = %State{address: address, port: port, options: options}
     {:ok, connect(state)}
   end
 
@@ -28,7 +27,7 @@ defmodule RiakPool.Worker do
     {:reply, result, state}
   end
 
-  def handle_call(msg, from, state) do
+  def handle_call(_msg, _from, state) do
     IO.inspect "very generic"
     {:reply, "test", state}
   end
@@ -54,7 +53,7 @@ defmodule RiakPool.Worker do
   end
 
 
-  def handle_info({:EXIT, _pid, reason}, state) do
+  def handle_info({:EXIT, _pid, _reason}, state) do
     new_state = state.connection(:undefined)
     timer = :erlang.send_after(state.options[:retry_interval], self, :reconnect)
     {:noreply, new_state.timer(timer)}
