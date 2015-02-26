@@ -19,7 +19,7 @@ defmodule RiakPool.Mixfile do
 
   defp deps do
     [
-      {:poolboy, github: "devinus/poolboy"},
+      {:poolboy, "~> 1.4.2"},
       {:riakc, github: "basho/riak-erlang-client"},
       {:ex_doc, github: "elixir-lang/ex_doc"}
     ]
